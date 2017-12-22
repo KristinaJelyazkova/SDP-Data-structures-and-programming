@@ -1,0 +1,3 @@
+m[Lisa Smith] = 20
+m[John Smith] = 12
+m[John Simth] = 15
