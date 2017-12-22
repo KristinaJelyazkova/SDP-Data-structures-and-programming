@@ -1,0 +1,13 @@
+digraph G{
+14[label="7"];
+14->13[color = "red"];
+14->10;
+13[label="30"];
+13->12;
+12[label="12"];
+12->11[color = "red"];
+11[label="90"];
+10[label="5"];
+10->9[color = "red"];
+9[label="50"];
+}
