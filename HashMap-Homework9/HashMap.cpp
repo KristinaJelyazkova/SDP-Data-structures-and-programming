@@ -257,7 +257,7 @@ KeyType HashMap<KeyType, ValueType>::findKeyToBiggestValue() const {
 	bool flag = false;
 	for (int i = 0; i < buckets->size(); i++) {
 		std::vector<kvpair> &bucket = (*buckets)[i];
-		for (int j = 0; j < bucket.size(); j++){
+		for (int j = 0; j < bucket.size(); j++) {
 			if (!flag) {
 				max = bucket[j].value;
 				maxKey = bucket[j].key;
@@ -340,5 +340,46 @@ void HashMap<KeyType, ValueType>::mapKeys(KeyType(*f)(const KeyType&)) {
 	}
 	(*this) = result;
 }
+
+/*template<class KeyType, class ValueType>
+HashMap<KeyType, std::vector<ValueType>> operator* (const HashMap<KeyType, ValueType> &hm1, const HashMap<KeyType, ValueType> &hm2) {
+	HashMap<KeyType, std::vector<ValueType>> result(hm2.size, hm2.h);
+	for (int i = 0; i < hm1.buckets->size(), i++) {
+		std::vector<kvpair> &bucket = (*hm1.buckets)[i];
+		for (int j = 0; j < bucket.size(); j++) {
+			KeyType key = bucket[j].key;
+			if (hm2.hasKey(key)) {
+				result[key].push_back(bucket[j].value);
+				result[key].push_back(hm2[key]);
+			}
+		}
+	}
+	return result;
+}*/
+
+template<class ValueType>
+std::vector<ValueType> append(std::vector<ValueType> v1, std::vector<ValueType> v2) {
+	std::vector<ValueType> result = v1;
+	for (int i = 0; i < v2.size(); i++) {
+		result.push_back(v2[i]);
+	}
+	return result;
+}
+
+/*template<class KeyType, class ValueType>
+HashMap<KeyType, std::vector<ValueType>> operator* (const HashMap<KeyType, std::vector<ValueType>> &hm1,
+	const HashMap<KeyType, std::vector<ValueType>> &hm2) {
+	HashMap<KeyType, vector<ValueType>> result(hm2.size, hm2.h);
+	for (int i = 0; i < hm1.buckets->size(), i++) {
+		std::vector<kvpair> &bucket = (*hm1.buckets)[i];
+		for (int j = 0; j < bucket.size(); j++) {
+			KeyType key = bucket[j].key;
+			if (hm2.hasKey(key)) {
+				result[key] = append(bucket[j].value, hm2[key]);
+			}
+		}
+	}
+	return result;
+}*/
 
 #endif

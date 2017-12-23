@@ -180,7 +180,7 @@ void testText2() {
 		}
 	}
 	//std::cout << map << std::endl
-		std::cout << map.findKeyToBiggestValue() << std::endl;
+	std::cout << map.findKeyToBiggestValue() << std::endl;
 }
 
 unsigned int h1(const int& n, unsigned int size) {
@@ -195,7 +195,7 @@ void testTask6() {
 	std::cin >> n;
 
 	int* key = new int[n];
-	int* value = new int [n];
+	int* value = new int[n];
 
 	bool flag = false;
 	for (int i = 0; i < n; i++) {
@@ -303,7 +303,37 @@ void testMapKeys() {
 	std::cout << c;
 }
 
-int main(){
+/*void testTask11() {
+	HashMap<std::string, double> m(5, h);
+	m["Kalin"] = 1.85; m["Ivan"] = 1.86;
+	HashMap<std::string, double> m1(3, h);
+	m1["Kalin"] = 2; m1["Petar"] = 2;
+	HashMap<std::string, std::vector<double>> mult = m * m1;
+	mult = mult * mult;
+
+	assert(mult.hasKey("Kalin"));
+	assert(!mult.hasKey("Ivan"));
+	assert(!mult.hasKey("Petar"));
+	assert(mult["Kalin"].size() == 4);
+}*/
+
+void testAppend() {
+	std::vector<int> v1;
+	for (int i = 0; i < 20; i++) {
+		v1.push_back(i);
+	}
+	std::vector<int> v2;
+	for (int i = 30; i < 50; i += 2) {
+		v2.push_back(i);
+	}
+	std::vector<int> v3 = append(v1, v2);
+	for (int i = 0; i < v3.size(); i++) {
+		std::cout << v3[i] << " ";
+	}
+	std::cout << std::endl;
+}
+
+int main() {
 	testBasicOp();
 	testCompare();
 	//std::cout << "Passed!\n";
@@ -320,7 +350,9 @@ int main(){
 	//testOperatorPlus();
 
 	//testMap();
-	testMapKeys();
+	//testMapKeys();
+
+	testAppend();
 
 	system("pause");
 	return 0;
