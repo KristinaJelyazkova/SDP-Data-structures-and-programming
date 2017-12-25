@@ -69,12 +69,17 @@ void testGrammar() {
 		B := vC
 		C := z
 		A := dD
-		D := f	*/
+		D := f	
 	assert(a['A' - 'A']['a'] == 'B' - 'A');
 	assert(a['B' - 'A']['v'] == 'C' - 'A');
 	assert(a['C' - 'A']['z'] == 'Z' - 'A' + 1);
 	assert(a['D' - 'A']['f'] == 'Z' - 'A' + 1);
-	assert(a['A' - 'A']['d'] == 'D' - 'A');
+	assert(a['A' - 'A']['d'] == 'D' - 'A');*/
+
+	std::ofstream out("automata.dot");
+	out << "digraph G {" << std::endl;
+	a.printDotty(out);
+	out << "}" << std::endl;
 }
 
 

@@ -122,3 +122,35 @@ bool DFSA::hasSymbol(unsigned int label, char symbol)
 		return false;
 	return table[indexof(label)].transitions.count(symbol) > 0;
 }
+
+void DFSA::printDotty(std::ostream& out) {
+	printDottyHelp(out, table[0]);
+}
+
+void DFSA::printDottyHelp(std::ostream& out, state crr) {
+	out << indexof(crr.label)
+		<< "[label=\""
+		<< (char)('A' + crr.label)
+		<< "\"];"
+		<< std::endl;
+	if (getSymbolsFrom(crr.label).size() == 0) {
+		return;
+	}
+	for (int i = 0; i < 26; i++) {
+		if (hasSymbol(crr.label,'a' + i)){
+			out << indexof(crr.label)
+				<< "->"
+				<< table[indexof(crr.label)].transitions['a' + i]
+				//<< ";"
+				<< "[label=\""
+				<< (char)('a' + i)
+				<< "\"];"
+				<< std::endl;
+		}
+	}
+	for (int i = 0; i < 26; i++) {
+		if (hasSymbol(crr.label, 'a' + i)) {
+			printDottyHelp(out, table[table[indexof(crr.label)].transitions['a' + i]]);
+		}
+	}
+}

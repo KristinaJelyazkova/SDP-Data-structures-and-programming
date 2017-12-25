@@ -50,6 +50,7 @@ public:
 	unsigned int toState(unsigned int, char);
 
 	bool hasSymbol(unsigned int, char);
+	void printDotty(std::ostream&);
 
 private:
 
@@ -61,6 +62,7 @@ private:
 
 	unsigned int indexof(unsigned int);
 	unsigned int labelof(unsigned int);
+	void printDottyHelp(std::ostream&, state);
 };
 
 #endif

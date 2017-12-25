@@ -1,5 +1,5 @@
-A := aB
-B := vC
-C := z
-A := dD
+A := aZ
+Z := vC
+H := zD
+A := dH
 D := f
