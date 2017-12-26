@@ -80,9 +80,13 @@ void testGrammar() {
 	out << "digraph G {" << std::endl;
 	a.printDotty(out);
 	out << "}" << std::endl;
+
+	std::cout << a.readsWord("dzf") << std::endl;
+	std::cout << a.readsWord("avf") << std::endl;
+	std::cout << a.readsWord("av") << std::endl;
+	std::cout << a.readsWord("dz") << std::endl;
+	std::cout << a.readsWord("v") << std::endl;
 }
-
-
 
 int main()
 {

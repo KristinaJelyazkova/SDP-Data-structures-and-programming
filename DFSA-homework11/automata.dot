@@ -5,9 +5,8 @@ digraph G {
 1[label="Z"];
 1->2[label="v"];
 2[label="C"];
+2->4[label="f"];
+4[label="["];
 3[label="H"];
-3->4[label="z"];
-4[label="D"];
-4->5[label="f"];
-5[label="["];
+3->2[label="z"];
 }

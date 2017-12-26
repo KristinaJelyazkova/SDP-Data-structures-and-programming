@@ -51,7 +51,7 @@ DFSA::state& DFSA::operator [] (unsigned int label)
 }
 
 
-DFSA::state::state(DFSA *_a) :a(_a), isFinal(false) {}
+DFSA::state::state(DFSA *_a) :a(_a), isFinal(false), marked(false) {}
 
 DFSA::transitionProxy DFSA::state::operator [] (char symbol)
 {
@@ -127,12 +127,16 @@ void DFSA::printDotty(std::ostream& out) {
 	printDottyHelp(out, table[0]);
 }
 
-void DFSA::printDottyHelp(std::ostream& out, state crr) {
+void DFSA::printDottyHelp(std::ostream& out, state& crr) {
+	if (crr.marked) {
+		return;
+	}
 	out << indexof(crr.label)
 		<< "[label=\""
 		<< (char)('A' + crr.label)
 		<< "\"];"
 		<< std::endl;
+	crr.marked = true;
 	if (getSymbolsFrom(crr.label).size() == 0) {
 		return;
 	}
@@ -153,4 +157,18 @@ void DFSA::printDottyHelp(std::ostream& out, state crr) {
 			printDottyHelp(out, table[table[indexof(crr.label)].transitions['a' + i]]);
 		}
 	}
+}
+
+bool DFSA::readsWord(std::string word) {
+	return readsWordHelp(word, 0, table[0]);
+}
+
+bool DFSA::readsWordHelp(std::string word, unsigned int index, state& current) {
+	if (word.size() <= index) {
+		return current.isFinal;
+	}
+	if (!hasSymbol(current.label, word[index])) {
+		return false;
+	}
+	return readsWordHelp(word, index + 1, table[table[indexof(current.label)].transitions[word[index]]]);
 }

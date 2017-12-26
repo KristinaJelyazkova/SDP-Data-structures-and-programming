@@ -26,6 +26,7 @@ private:
 	{
 		bool isFinal;
 		int label;
+		bool marked;
 		//table[i] -> редът на състоянието i в таблицата
 		//table[i]['a'] -> целево състояние при преход от i с 'a'
 		std::map<char, unsigned int> transitions;
@@ -51,6 +52,7 @@ public:
 
 	bool hasSymbol(unsigned int, char);
 	void printDotty(std::ostream&);
+	bool readsWord(std::string);
 
 private:
 
@@ -62,7 +64,8 @@ private:
 
 	unsigned int indexof(unsigned int);
 	unsigned int labelof(unsigned int);
-	void printDottyHelp(std::ostream&, state);
+	void printDottyHelp(std::ostream&, state&);
+	bool readsWordHelp(std::string, unsigned int, state&);
 };
 
 #endif
