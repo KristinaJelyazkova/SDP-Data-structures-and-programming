@@ -25,6 +25,15 @@ void testPairsIterator() {
 		std::cout << t.getNext() << " ";
 	}
 	std::cout << std::endl;
+	/*std::pair<int, int> save = current;
+	if (current.first + current.second < max) {
+		current.second++;
+	}
+	else {
+		current.first++;
+		current.second = 0;
+	}
+	return save;*/
 }
 
 int main() {
