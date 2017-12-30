@@ -1,4 +1,4 @@
-#include"HanoyTowersIterator.cpp"
+#include"HanoyTowersIterator.h"
 
 void testHanoyPlayer() {
 	HanoyPlayer hp(5);
