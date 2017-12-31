@@ -218,7 +218,7 @@ BTree<T>::BTree() :root(nullptr)
 template <class T>
 BTree<T>::BTree(const T data, const BTree<T> &lt, const BTree<T> &rt)
 {
-	//TODO: Õ≈ “¿ ¿!!!
+	//TODO: √ç√Ö √í√Ä√ä√Ä!!!
 	root = new TreeNode<T>(data, lt.root, rt.root);
 
 }
@@ -300,12 +300,12 @@ bool BTree<T>::insertElement(std::string trace, const T& x, TreeNode<T> *&crr)
 	//=> trace != "" && current != nullptr
 	if (trace[0] == 'L')
 	{
-		trace.erase(0);
+		trace.erase(0,1);
 		return insertElement(trace, x, crr->left);
 	}
 	if (trace[0] == 'R')
 	{
-		trace.erase(0);
+		trace.erase(0,1);
 		return insertElement(trace, x, crr->right);
 	}
 	return false;
@@ -370,7 +370,7 @@ crr = crr->right;
 assert (crr != nullptr);
 }
 assert (trace[letter] == 'L' || trace[letter] == 'R');
-//crr ÒÓ˜Ë Ó‰ËÚÂÎˇ Ì‡ "‰ÛÔÍ‡Ú‡"
+//crr √±√Æ√∑√® √∞√Æ√§√®√≤√•√´√ø √≠√† "√§√≥√Ø√™√†√≤√†"
 if (trace[letter] == 'L')
 {
 assert (crr->left == nullptr);
