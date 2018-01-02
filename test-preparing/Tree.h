@@ -40,6 +40,19 @@ public:
 	void prettyPrint() const;
 	std::string findTrace(const T&) const;
 
+	Tree(const BTree<T>&);
+	Tree<T>& operator = (const BTree<T>&);
+	~Tree();
+
+	bool operator == (const BTree<T>&) const;
+	bool member(const T& x) const;
+	void read(std::istream&);
+
+	void parseExpression(std::string);
+	double calculateExpressionTree() const;
+	T& operator[](int);
+	std::vector<T> level(int) const;
+
 private:
 	TreeNode<T> *root;
 
@@ -55,6 +68,18 @@ private:
 
 	std::string findTraceHelp(const T&, TreeNode<T>*) const;
 	void prettyPrintHelp(TreeNode<T>*, int) const;
+
+	TreeNode<T>* copyFrom(const TreeNode<T> *);
+	void del(TreeNode<T>*);
+
+	bool compare(const TreeNode<T> *, const TreeNode<T> *) const;
+	bool member(const T&, const TreeNode<T> *) const;
+	TreeNode<T>* readFromStream(std::istream &);
+
+	TreeNode<char>* parseExpressionHelp(std::string&);
+	double calculateExpressionTree(TreeNode<char> *) const;
+	T& operHelp(int&, TreeNode<T>*);
+	void levelHelp(int, std::vector<T>&, TreeNode<T>*) const;
 };
 
 template<class T>

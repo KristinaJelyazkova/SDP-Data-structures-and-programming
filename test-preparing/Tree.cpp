@@ -1,5 +1,6 @@
 #include"Tree.h"
 #include<vector>
+#include<cassert>
 
 template<class T>
 int TreeNode<T>::maxID = 0;
@@ -280,4 +281,202 @@ std::string Tree<T>::findTraceHelp(const T& x, TreeNode<T> *crr) const {
 		return 'R' + s1;
 	}
 	return "_";
+}
+
+template<class T>
+TreeNode<T>* Tree<T>::copyFrom(const TreeNode<T> *otherCrr) {
+	if (otherCrr == nullptr) {
+		return nullptr;
+	}
+	return new TreeNode<T>(otherCrr->data, copyFrom(otherCrr->left), copyFrom(otherCrr->right);
+}
+
+template<class T>
+void Tree<T>::del(TreeNode<T> *crr) {
+	if (crr == nullptr) {
+		return;
+	}
+	del(crr->left);
+	del(crr->right);
+	delete crr;
+}
+
+template<class T>
+bool Tree<T>::compare(const TreeNode<T> *t1, const TreeNode<T> *t2) const {
+	if (t1 == nullptr) {
+		return t2 == nullptr;
+	}
+	if (t2 == nullptr) {
+		return t1 == nullptr;
+	}
+	return (t1->data == t2->data) && compare(t1->left, t2->left) && compare(t1->right, t2->right);
+}
+
+template<class T>
+bool Tree<T>::member(const T& x, const TreeNode<T> *crr) const {
+	if (crr == nullptr) {
+		return false;
+	}
+	return (x == crr->data) || member(x, crr->left) || member(x, crr->right);
+}
+
+template<class T>
+TreeNode<T>* Tree<T>::readFromStream(std::istream &in) {
+	//()..............
+	//( 7 ( 30 () ( 12 ( 90 () () ) () ) ) ( 5 ( 50 () () ) () ) )
+	char next;
+	next = in.get();
+	assert(next == '(');
+
+	next = in.get();
+	assert(next == ' ' || next == ')');
+	if (next == ')') {
+		return nullptr;
+	}
+
+	T rootValue;
+	in >> rootValue;
+
+	next = in.get();
+	assert(next == ' ');
+
+	TreeNode<T> *left, *right;
+	left = readFromStream(in);
+	nextChar = in.get();
+	assert(nextChar == ' ');
+	right = readFromStream(in);
+
+	next = in.get();
+	assert(next == ' ');
+
+	next = in.get();
+	assert(next == ')');
+
+	return new TreeNode<T>(rootValue, left, right);
+}
+
+template<class T>
+Tree<T>::Tree(const Tree<T>& other) {
+	root = copyFrom(other.root);
+}
+
+template<class T>
+Tree<T>& Tree<T>::operator = (const BTree<T>& other) {
+	if (this != &other) {
+		del(root);
+		root = copyFrom(other.root);
+	}
+	return *this;
+}
+
+template<class T>
+Tree<T>::~Tree() {
+	del(root);
+}
+
+template<class T>
+bool Tree<T>::operator == (const BTree<T> &other) const {
+	return compare(root, other.root)
+}
+
+template<class T>
+bool Tree<T>::member(const T& x) const {
+	return member(x, root);
+}
+
+template<class T>
+void Tree<T>::read(std::istream &in) {
+	root = readFromStream(in);
+}
+
+void Tree<char>::parseExpression(std::string s) {
+	root = parseExpressionHelp(s);
+}
+
+TreeNode<char>* Tree<char>::parseExpressionHelp(std::string& s) {
+	if (s.empty()) {
+		return nullptr;
+	}
+	if (s[0] != '(') {
+		char save = s[0];
+		s.erase(0, 1);
+		return new TreeNode<char>(save, nullptr, nullptr);
+	}
+	assert(s[0] == '(');
+	s.erase(0, 1);
+	TreeNode<char> *left = parseExpressionHelp(s);
+	char rootValue = s[0];
+	assert(rootValue == '+' || rootValue == '-' || rootValue == '*' || rootValue == '/');
+	s.erase(0, 1);
+	TreeNode<char> *right = parseExpressionHelp(s);
+	assert(s[0] == ')');
+	s.erase(0, 1);
+	return new TreeNode<char>(rootValue, left, right);
+}
+
+double Tree<char>::calculateExpressionTree() const {
+	return calculateExpressionTree(root);
+}
+
+double Tree<char>::calculateExpressionTree(TreeNode<char> *crr) const {
+	if (crr == nullptr) {
+		return 0;
+	}
+	char rootValue = crr->data;
+	if (rootValue == '+' || rootValue == '-' || rootValue == '*' || rootValue == '/') {
+		double left = calculateExpressionTree(crr->left),
+			right = calculateExpressionTree(crr->left);
+		switch (rootValue) {
+		case '+': return left + right; break;
+		case '-': return left - right; break;
+		case '*': return left * right; break;
+		case '/': return (double)left / right; break;
+		}
+	}
+	return rootValue - '0';
+}
+
+template<class T>
+T& Tree<T>::operator[](int i) {
+	return operHelp(i, root);
+}
+
+template<class T>
+T& Tree<T>::operHelp(int& i, TreeNode<T> *crr) {
+	if (i == 0) {
+		T& data = crr->data;
+		return data;
+	}
+	if (crr->left != nullptr) {
+		T& data = operHelp(--i, crr->left);
+		if (i == 0) {
+			return data;
+		}
+	}
+	if (crr->right != nullptr) {
+		T& data = operHelp(--i, crr->right);
+		if (i == 0) {
+			return data;
+		}
+	}
+}
+
+template <class T>
+std::vector<T> Tree<T>::level(int k) const {
+	std::vector<T> v;
+	levelHelp(k, v, root);
+	return v;
+}
+
+template <class T>
+void Tree<T>::levelHelp(int k, std::vector<T>& v, TreeNode<T> *crr) const {
+	if (crr == nullptr) {
+		return;
+	}
+	if (k == 0) {
+		v.push_back(crr->data);
+		return;
+	}
+	levelHelp(k - 1, v, crr->left);
+	levelHelp(k - 1, v, crr->right);
 }
