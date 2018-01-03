@@ -43,6 +43,95 @@ private:
 std::ostream& operator<< (std::ostream&, const Matrix&);
 
 template<class T>
+struct task {
+	TreeNode<T> *node;
+	bool toPrintNow;
+
+	task(TreeNode<T> *, bool);
+};
+
+template<class T>
+class LRoRTreeIterator {
+public:
+	LRoRTreeIterator(TreeNode<T>*);
+
+	T operator*();
+	LRoRTreeIterator<T>& operator++(int);
+
+	bool operator==(const LRoRTreeIterator<T> &);
+	bool operator!=(const LRoRTreeIterator<T> &);
+
+private:
+	void windStack();
+	std::stack<task<T>> s;
+};
+
+
+template<class T>
+class RoRLTreeIterator {
+public:
+	RoRLTreeIterator(TreeNode<T>*);
+
+	T operator*();
+	RoRLTreeIterator<T>& operator++(int);
+
+	bool operator==(const RoRLTreeIterator<T> &);
+	bool operator!=(const RoRLTreeIterator<T> &);
+
+private:
+	void windStack();
+	std::stack<task<T>> s;
+};
+
+template<class T>
+class LevelIterator {
+public:
+	LevelIterator(TreeNode<T>*);
+
+	T operator*();
+	LevelIterator<T>& operator++(int);
+
+	bool operator==(const LevelIterator<T> &);
+	bool operator!=(const LevelIterator<T> &);
+
+private:
+	std::queue<TreeNode<T>> q;
+};
+
+template<class T>
+class LeafIterator {
+public:
+	LeafIterator(TreeNode<T>*);
+
+	T operator*();
+	LeafIterator<T>& operator++(int);
+
+	bool operator==(const LeafIterator<T> &);
+	bool operator!=(const LeafIterator<T> &);
+
+private:
+	void windStack();
+	std::stack<task<T>> s;
+};
+
+template<class T>
+class PredIterator {
+public:
+	PredIterator(TreeNode<T>*, bool (*_pred)(const T&));
+
+	T operator*();
+	PredIterator<T>& operator++(int);
+
+	bool operator==(const PredIterator<T> &);
+	bool operator!=(const PredIterator<T> &);
+
+private:
+	void windStack();
+	std::stack<task<T>> s;
+	bool (*pred)(const T&);
+};
+
+template<class T>
 class Tree {
 public:
 	Tree();
@@ -91,6 +180,13 @@ public:
 	void replaceWithSizeOfSubtree();
 	void makeMatrixTree();
 	void balanceStringTree();
+
+	template<class I>
+	I begin();
+	template<class I>
+	I end();
+	void levelsPrint(std::ostream& out);
+	void printWithStack(std::ostream& out);
 
 private:
 	TreeNode<T> *root;

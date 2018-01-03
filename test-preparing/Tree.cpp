@@ -771,3 +771,329 @@ void Tree<std::string>::balanceStringTree(TreeNode<std::string> *crr, int h, std
 	balanceStringTree(crr->left, h + 1, v, copy);
 	balanceStringTree(crr->right, h + 1, v, copy);
 }
+
+template<class T>
+task<T>::task(TreeNode<T> *_node, bool _p) : node(_node), toPrintNow(_p) {}
+
+template<class T>
+LRoRTreeIterator<T>::LRoRTreeIterator(TreeNode<T> *root) {
+	if (root != nullptr) {
+		s.push(task<T>(root, false));
+		windStack();
+	}
+}
+
+template<class T>
+T LRoRTreeIterator<T>::operator*() {
+	assert(!s.empty());
+	T data = s.top().node->data;
+	return data;
+}
+
+template<class T>
+LRoRTreeIterator<T>& LRoRTreeIterator<T>::operator++(int x) {
+	assert(!s.empty());
+	s.pop();
+	windStack();
+	return *this;
+}
+
+template<class T>
+void LRoRTreeIterator<T>::windStack() {
+	while (!s.empty() && s.top().toPrintNow == false) {
+		task<T> topTask = s.top();
+		s.pop();
+		TreeNode<T> crr = topTask.node;
+		if (crr->right != nullptr) {
+			s.push(task<T>(crr->right, false));
+		}
+		s.push(task<T>(crr, true));
+		if (crr->left != nullptr) {
+			s.push(task<T>(crr->left, false));
+		}
+	}
+}
+
+template<class T>
+bool LRoRTreeIterator<T>::operator==(const LRoRTreeIterator<T> &other) {
+	return (s.empty() && other.s.empty()) ||
+		((!s.empty() == !other.s.empty()) 
+			&& (s.top().node == other.s.top())
+			&& (s.top().toPrintNow == other.s.top().toPrintNow));
+}
+
+template<class T>
+bool LRoRTreeIterator<T>::operator!=(const LRoRTreeIterator<T> &other) {
+	return !(*this == other);
+}
+
+template<class T>
+template<class I>
+I Tree<T>::begin() {
+	return I(root);
+}
+
+template<class T>
+template<class I>
+I Tree<T>::end() {
+	return I(nullptr);
+}
+
+template<class T>
+void Tree<T>::levelsPrint(std::ostream& out) {
+	if (root == nullptr) {
+		return;
+	}
+	std::queue<TreeNode<T>*> q;
+	q.push(root);
+	q.push(nullptr);
+	while (q.size() > 1) {
+		TreeNode<T> *crr = q.front();
+		q.pop();
+		if (crr != nullptr) {
+			out << crr->data << " ";
+			if (crr->left != nullptr) {
+				q.push(crr->left);
+			}
+			if (crr->right != nullptr) {
+				q.push(crr->right);
+			}
+		}
+		else {
+			out << std::endl;
+			q.push(nullptr);
+		}
+	}
+
+}
+
+template<class T>
+void Tree<T>::printWithStack(std::ostream& out) {
+	if (root == nullptr) {
+		return;
+	}
+	std::stack<task<T>> s;
+	s.push(task<T>(root, false));
+	while (!s.empty()) {
+		task<T> crrTask = s.top();
+		s.pop();
+		TreeNode<T> *crr = crrTask.node;
+		if (crrTask.toPrintNow == true) {
+			out << crr->data << " ";
+		}
+		else {
+			if (crr->right != nullptr) {
+				s.push(task<T>(crr->right, false));
+			}
+			s.push(task<T>(crr, true));
+			if (crr->left != nullptr) {
+				s.push(task<T>(crr->left, false));
+			}
+		}
+	}
+	out << '\n';
+}
+
+template<class T>
+RoRLTreeIterator<T>::RoRLTreeIterator(TreeNode<T> *root) {
+	if (root != nullptr) {
+		s.push(task<T>(root, false));
+		windStack();
+	}
+}
+
+template<class T>
+T RoRLTreeIterator<T>::operator*() {
+	assert(!s.empty());
+	T data = s.top().node->data;
+	return data;
+}
+
+template<class T>
+RoRLTreeIterator<T>& RoRLTreeIterator<T>::operator++(int x) {
+	assert(!s.empty());
+	s.pop();
+	windStack();
+	return *this;
+}
+
+template<class T>
+void RoRLTreeIterator<T>::windStack() {
+	while (!s.empty() && s.top().toPrintNow == false) {
+		task<T> topTask = s.top();
+		s.pop();
+		TreeNode<T> crr = topTask.node;
+		if (crr->left != nullptr) {
+			s.push(task<T>(crr->left, false));
+		}
+		if (crr->right != nullptr) {
+			s.push(task<T>(crr->right, false));
+		}
+		s.push(task<T>(crr, true));
+	}
+}
+
+template<class T>
+bool RoRLTreeIterator<T>::operator==(const RoRLTreeIterator<T> &other) {
+	return (s.empty() && other.s.empty()) ||
+		((!s.empty() == !other.s.empty())
+			&& (s.top().node == other.s.top())
+			&& (s.top().toPrintNow == other.s.top().toPrintNow));
+}
+
+template<class T>
+bool RoRLTreeIterator<T>::operator!=(const RoRLTreeIterator<T> &other) {
+	return !(*this == other);
+}
+
+template<class T>
+LevelIterator<T>::LevelIterator(TreeNode<T> *root) {
+	if (root != nullptr) {
+		q.push(root);
+	}
+}
+
+template<class T>
+T LevelIterator<T>::operator*() {
+	assert(!q.empty());
+	T data = q.front()->data;
+	return data;
+}
+
+template<class T>
+LevelIterator<T>& LevelIterator<T>::operator++(int x) {
+	assert(!q.empty());
+	TreeNode<T> *crr = q.front();
+	q.pop();
+	if (crr->left != nullptr) {
+		q.push(crr->left);
+	}
+	if (crr->right != nullptr) {
+		q.push(crr->right);
+	}
+	return *this;
+}
+
+template<class T>
+bool LevelIterator<T>::operator==(const LevelIterator<T> &other) {
+	return (q.empty() && other.q.empty()) ||
+		((!q.empty() == !other.q.empty())
+			&& (q.front() == other.q.front());
+}
+
+template<class T>
+bool LevelIterator<T>::operator!=(const LevelIterator<T> &other) {
+	return !(*this == other);
+}
+
+template<class T>
+LeafIterator<T>::LeafIterator(TreeNode<T> *root) {
+	if (root != nullptr) {
+		s.push(task<T>(root, false));
+		windStack();
+	}
+}
+
+template<class T>
+T LeafIterator<T>::operator*() {
+	assert(!s.empty());
+	T data = s.top().node->data;
+	return data;
+}
+
+template<class T>
+LeafIterator<T>& LeafIterator<T>::operator++(int x) {
+	assert(!s.empty());
+	s.pop();
+	windStack();
+	return *this;
+}
+
+template<class T>
+void LeafIterator<T>::windStack() {
+	while (!s.empty() && s.top().toPrintNow == false) {
+		task<T> topTask = s.top();
+		s.pop();
+		TreeNode<T> crr = topTask.node;
+		if (crr->left == nullptr && crr->right == nullptr) {
+			s.push(task<T>(crr, true));
+		}
+		else {
+			if (crr->right != nullptr) {
+				s.push(task<T>(crr->right, false));
+			}
+			if (crr->left != nullptr) {
+				s.push(task<T>(crr->left, false));
+			}
+		}
+	}
+}
+
+template<class T>
+bool LeafIterator<T>::operator==(const LeafIterator<T> &other) {
+	return (s.empty() && other.s.empty()) ||
+		((!s.empty() == !other.s.empty())
+			&& (s.top().node == other.s.top())
+			&& (s.top().toPrintNow == other.s.top().toPrintNow));
+}
+
+template<class T>
+bool LeafIterator<T>::operator!=(const LeafIterator<T> &other) {
+	return !(*this == other);
+}
+
+template<class T>
+PredIterator<T>::PredIterator(TreeNode<T> *root, bool (*_pred)(const T&)) {
+	if (root != nullptr) {
+		s.push(task<T>(root, false));
+		pred = _pred;
+		windStack();
+	}
+}
+
+template<class T>
+T PredIterator<T>::operator*() {
+	assert(!s.empty());
+	T data = s.top().node->data;
+	return data;
+}
+
+template<class T>
+PredIterator<T>& PredIterator<T>::operator++(int x) {
+	assert(!s.empty());
+	s.pop();
+	windStack();
+	return *this;
+}
+
+template<class T>
+void PredIterator<T>::windStack() {
+	while (!s.empty() && s.top().toPrintNow == false) {
+		task<T> topTask = s.top();
+		s.pop();
+		TreeNode<T> crr = topTask.node;
+		if (crr->right != nullptr) {
+				s.push(task<T>(crr->right, false));
+		}
+		if (pred(crr->data)) {
+			s.push(task<T>(crr, true));
+		}
+		if (crr->left != nullptr) {
+				s.push(task<T>(crr->left, false));
+		}
+		}
+	}
+}
+
+template<class T>
+bool PredIterator<T>::operator==(const PredIterator<T> &other) {
+	return (s.empty() && other.s.empty()) ||
+		((!s.empty() == !other.s.empty())
+			&& (s.top().node == other.s.top())
+			&& (s.top().toPrintNow == other.s.top().toPrintNow));
+}
+
+template<class T>
+bool PredIterator<T>::operator!=(const PredIterator<T> &other) {
+	return !(*this == other);
+}
