@@ -1,6 +1,7 @@
 #include"Tree.h"
 #include<vector>
 #include<cassert>
+#include<set>
 
 template<class T>
 int TreeNode<T>::maxID = 0;
@@ -361,7 +362,7 @@ Tree<T>::Tree(const Tree<T>& other) {
 }
 
 template<class T>
-Tree<T>& Tree<T>::operator = (const BTree<T>& other) {
+Tree<T>& Tree<T>::operator = (const Tree<T>& other) {
 	if (this != &other) {
 		del(root);
 		root = copyFrom(other.root);
@@ -375,7 +376,7 @@ Tree<T>::~Tree() {
 }
 
 template<class T>
-bool Tree<T>::operator == (const BTree<T> &other) const {
+bool Tree<T>::operator == (const Tree<T> &other) const {
 	return compare(root, other.root)
 }
 
@@ -479,4 +480,158 @@ void Tree<T>::levelHelp(int k, std::vector<T>& v, TreeNode<T> *crr) const {
 	}
 	levelHelp(k - 1, v, crr->left);
 	levelHelp(k - 1, v, crr->right);
+}
+
+template <class T>
+void Tree<T>::deleteBOT(const T& x) {
+	removeFromSubtreeProc(x, root);
+}
+
+template <class T>
+void Tree<T>::fillGaps(const T&x, unsigned int k) {
+	fillGaps(x, root, k);
+}
+
+template <class T>
+void Tree<T>::removeFromSubtreeProc(const T& x, TreeNode<T> *&crr) {
+	if (crr == nullptr) {
+		return;
+	}
+	if (crr->data == x && crr->left == nullptr) {
+		TreeNode<T> *save = crr->right;
+		delete crr;
+		crr = save;
+		return;
+	}
+	if (crr->data == x && crr->right == nullptr) {
+		TreeNode<T> *save = crr->left;
+		delete crr;
+		crr = save;
+		return;
+	}
+	if (crr->data == x) {
+		T rightMin = findmin(crr->right);
+		crr->data = rightMin;
+		removeFromSubtreeProc(rightMin, crr->right);
+		removeFromSubtreeProc(x, crr);
+		return;
+	}
+	if (crr->data < x) {
+		removeFromSubtreeProc(x, crr->right);
+	}
+	else {
+		removeFromSubtreeProc(x, crr->left);
+	}
+	return;
+}
+
+template <class T>
+TreeNode<T>*  Tree<T>::removeFromSubtree(const T&x, TreeNode<T> *crr) {
+	if (crr == nullptr) {
+		return nullptr;
+	}
+	if (crr->data == x && crr->left == nullptr) {
+		TreeNode<T> *save = crr->right;
+		delete crr;
+		return save;
+	}
+	if (crr->data == x && crr->right == nullptr) {
+		TreeNode<T> *save = crr->left;
+		delete crr;
+		return save;
+	}
+	if (crr->data == x) {
+		T rightMin = findmin(crr->right);
+		crr->data = rightMin;
+		crr->right = removeFromSubtree(rightMin, crr->right);
+		crr = removeFromSubtree(x, crr);
+		return crr;
+	}
+	if (crr->data < x) {
+		crr->right = removeFromSubtree(x, crr->right);
+	}
+	else {
+		crr->left = removeFromSubtree(x, crr->left);
+	}
+	return crr;
+}
+
+template <class T>
+void Tree<T>::fillGaps(const T&x, TreeNode<T> *&crr, unsigned int k) {
+	if (k == 0) {
+		return;
+	}
+	if (crr == nullptr) {
+		crr = new TreeNode<T>(x, nullptr, nullptr);
+	}
+	fillGaps(x, crr->left, k - 1);
+	fillGaps(x, crr->right, k - 1);
+}
+
+template <class T>
+T& Tree<T>::findmin(TreeNode<T> *crr) {
+	assert(crr != nullptr);
+	while (crr->left != nullptr) {
+		crr = crr->left;
+	}
+	return crr->data;
+}
+
+template <class T>
+bool Tree<T>::hasSameLevels() {
+	std::vector<std::set<T>> v;
+	//v.assign(height(), std::set<T>());
+	findAllLevels(v, root, 0);
+	for (int i = 0; i < v.size() - 1; i++) {
+		for (int j = i + 1; j < v.size(); j++) {
+			if (v[i] == v[j]) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+template <class T>
+void Tree<T>::findAllLevels(std::vector<std::set<T>> &v, TreeNode<T> *crr, int h) {
+	if (crr == nullptr) {
+		return;
+	}
+	if (h >= v.size()) {
+		v.push_back(std::set<T>());
+	}
+	v[h].insert(crr->data);
+	findAllLevels(v, crr->left, h + 1);
+	findAllLevels(v, crr->right, h + 1);
+}
+
+template <class T>
+bool Tree<T>::isBOT() {
+	return isBOT(root, INT32_MIN, INT32_MAX);
+}
+
+template <class T>
+bool Tree<T>::isBOT(TreeNode<T> *crr, int min, int max) {
+	if (crr == nullptr) {
+		return true;
+	}
+	return crr->data >= min && crr->data <= max
+		isBOT(crr->left, min, crr->data) &&
+		isBOT(crr->right, crr->data, max);
+}
+
+template <class T>
+void Tree<T>::replaceWithSizeOfSubtree() {
+	replaceWithSizeOfSubtree(root);
+}
+
+template <class T>
+int Tree<T>::replaceWithSizeOfSubtree(TreeNode<T> *crr) {
+	if (crr == nullptr) {
+		return 0;
+	}
+	int sizeOfLeftSubtree = replaceWithSizeOfSubtree(crr->left),
+		sizeOfRightSubtree = replaceWithSizeOfSubtree(crr->right);
+	crr->data = 1 + sizeOfLeftSubtree + sizeOfRightSubtree;
+	return crr->data;
 }

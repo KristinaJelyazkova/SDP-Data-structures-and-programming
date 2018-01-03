@@ -2,6 +2,7 @@
 #include<iostream>
 #include<string>
 #include<vector>
+#include<set>
 
 template<class T>
 struct TreeNode {
@@ -40,11 +41,11 @@ public:
 	void prettyPrint() const;
 	std::string findTrace(const T&) const;
 
-	Tree(const BTree<T>&);
-	Tree<T>& operator = (const BTree<T>&);
+	Tree(const Tree<T>&);
+	Tree<T>& operator = (const Tree<T>&);
 	~Tree();
 
-	bool operator == (const BTree<T>&) const;
+	bool operator == (const Tree<T>&) const;
 	bool member(const T& x) const;
 	void read(std::istream&);
 
@@ -52,6 +53,15 @@ public:
 	double calculateExpressionTree() const;
 	T& operator[](int);
 	std::vector<T> level(int) const;
+
+	void deleteBOT(const T&);
+	void fillGaps(const T&, unsigned int);
+	TreeNode<T>* removeFromSubtree(const T&, TreeNode<T> *);
+	void removeFromSubtreeProc(const T&, TreeNode<T> *&);
+
+	bool hasSameLevels();
+	bool isBOT();
+	void replaceWithSizeOfSubtree();
 
 private:
 	TreeNode<T> *root;
@@ -80,6 +90,13 @@ private:
 	double calculateExpressionTree(TreeNode<char> *) const;
 	T& operHelp(int&, TreeNode<T>*);
 	void levelHelp(int, std::vector<T>&, TreeNode<T>*) const;
+
+	void fillGaps(const T&, TreeNode<T> *&, unsigned int);
+	T& findmin(TreeNode<T> *);
+
+	void findAllLevels(std::vector<std::set<T>>&, TreeNode<T> *, int);
+	bool isBOT(TreeNode<T>*, int, int);
+	T replaceWithSizeOfSubtree(TreeNode<T>*);
 };
 
 template<class T>
