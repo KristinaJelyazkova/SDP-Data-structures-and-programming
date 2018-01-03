@@ -635,3 +635,139 @@ int Tree<T>::replaceWithSizeOfSubtree(TreeNode<T> *crr) {
 	crr->data = 1 + sizeOfLeftSubtree + sizeOfRightSubtree;
 	return crr->data;
 }
+
+Matrix::Matrix(std::pair<int, int> _first, std::pair<int, int> _size) :
+	first(_first), size(_size) {}
+
+bool Matrix::isRight(int min) const {
+	for (int i = first.first; i < first.first + size.first; i++) {
+		for (int j = first.second; j < first.second + size.second; j++) {
+			if (mainMatrix[i][j] <= min) {
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+bool Matrix::isLeft(int max) const {
+	for (int i = first.first; i < first.first + size.first; i++) {
+		for (int j = first.second; j < first.second + size.second; j++) {
+			if (mainMatrix[i][j] >= max) {
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+void Matrix::findAllSubmatrixes(std::vector<Matrix> &v, char symbol) const {
+	for (int i = first.first; i < first.first + size.first - 1; i++) {
+		for (int j = first.second; j < first.second + size.second - 1; j++) {
+			for (int m = 2; m < size.first - (i - first.first); m++) {
+				for (int n = 2; n < size.second - (j - first.second); n++) {
+					Matrix curMatrix({ i,j }, { m,n });
+					int curFirst = mainMatrix[first.first][first.second];
+					if ((symbol == 'L' && curMatrix.isLeft(curFirst)) ||
+						(symbol == 'R' && curMatrix.isRight(curFirst))) {
+						v.push_back(curMatrix);
+					}
+				}
+			}
+		}
+	}
+}
+
+bool Matrix::findBiggestSubmatrix(Matrix& m, char symbol) const {
+	std::vector<Matrix> v;
+	findAllSubmatrixes(v, symbol);
+	if (v.empty()) {
+		return false;
+	}
+	int maxSize = v[0].sizeM();
+	int maxIndex = 0;
+	for (int i = 1; i < v.size(); i++) {
+		int curSize = v[i].sizeM();
+		if (curSize > maxSize) {
+			maxSize = curSize;
+			maxIndex = i;
+		}
+	}
+	m = v[maxIndex];
+	return true;
+}
+
+int Matrix::sizeM() const {
+	return size.first * size.second;
+}
+
+std::ostream& operator<< (std::ostream& out, const Matrix& m) {
+	for (int j = m.first.second; j < m.first.second + m.size.second; j++){
+		for (int i = m.first.first; i < m.first.first + m.size.first; i++) {
+			out << mainMatrix[i][j] << " ";
+		}
+		out << "\n";
+	}
+	return out;
+}
+
+template<>
+void Tree<Matrix>::makeMatrixTree() {
+	root = new TreeNode<Matrix>(Matrix({ 0,0 }, {matrixWidth, matrixHeight}), nullptr, nullptr);
+	makeMatrixTree(root->left, 'L', root);
+	makeMatrixTree(root->right, 'R', root);
+}
+
+template<>
+void Tree<Matrix>::makeMatrixTree(TreeNode<Matrix> *&crr, char symbol, TreeNode<Matrix> *par) {
+	Matrix m({ 0,0 }, { 0,0 });
+	if (par->data.findBiggestSubmatrix(m, symbol)) {
+		crr = new TreeNode<Matrix>(m, nullptr, nullptr);
+		makeMatrixTree(crr->left, 'L', crr);
+		makeMatrixTree(crr->right, 'R', crr);
+	}
+}
+
+template<>
+void Tree<std::string>::createVectorOfStringsOnLevels(TreeNode<std::string> *crr, int h, std::vector<std::string> &v) {
+	if (crr == nullptr) {
+		return;
+	}
+	if (h >= v.size()) {
+		v.push_back("");
+	}
+	v[h] += crr->data;
+	createVectorOfStringsOnLevels(crr->left, h + 1, v);
+	createVectorOfStringsOnLevels(crr->right, h + 1, v);
+}
+
+template<>
+void Tree<std::string>::balanceStringTree() {
+	std::vector<std::string> v;
+	createVectorOfStringsOnLevels(root, 0, v);
+	balanceStringTree(root, 0, v, v);
+}
+
+template<>
+void Tree<std::string>::balanceStringTree(TreeNode<std::string> *crr, int h, std::vector<std::string> &v, std::vector<std::string> copy) {
+	if (crr == nullptr && h >= v.size()) {
+		return;
+	}
+	int curSize = ceil((double)copy[h].length() / pow(2, h));
+	std::string curWord;
+	if (v[h].size() < curSize) {
+		curWord = v[h];
+	}
+	else {
+		curWord.assign(v[h], 0, curSize);
+	}
+	if (crr == nullptr) {
+		crr = new TreeNode<std::string>(curWord, nullptr, nullptr);
+	}
+	else {
+		crr->data = curWord;
+	}
+	v[h].erase(0, curSize);
+	balanceStringTree(crr->left, h + 1, v, copy);
+	balanceStringTree(crr->right, h + 1, v, copy);
+}

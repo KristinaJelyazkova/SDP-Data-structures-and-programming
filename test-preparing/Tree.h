@@ -15,6 +15,33 @@ private:
 	int id;
 };
 
+const int matrixWidth = 5,
+matrixHeight = 5;
+
+int mainMatrix[matrixWidth][matrixHeight] = {
+	10, 20, 20, 10, 20,
+	20, 30, 40, 35, 35,
+	20, 40, 50, 35, 35,
+	8, 5, 50, 60, 60,
+	8, 5, 10, 10, 10
+};
+
+class Matrix {
+public:
+	Matrix(std::pair<int, int>, std::pair<int, int>);
+	bool isRight(int) const;
+	bool isLeft(int) const;
+	void findAllSubmatrixes(std::vector<Matrix>&, char) const;
+	bool findBiggestSubmatrix(Matrix&, char) const;
+	int sizeM() const;
+	friend std::ostream& operator<< (std::ostream&, const Matrix&);
+private:
+	std::pair<int, int> first;
+	std::pair<int, int> size;
+};
+
+std::ostream& operator<< (std::ostream&, const Matrix&);
+
 template<class T>
 class Tree {
 public:
@@ -62,6 +89,8 @@ public:
 	bool hasSameLevels();
 	bool isBOT();
 	void replaceWithSizeOfSubtree();
+	void makeMatrixTree();
+	void balanceStringTree();
 
 private:
 	TreeNode<T> *root;
@@ -97,6 +126,9 @@ private:
 	void findAllLevels(std::vector<std::set<T>>&, TreeNode<T> *, int);
 	bool isBOT(TreeNode<T>*, int, int);
 	T replaceWithSizeOfSubtree(TreeNode<T>*);
+	void makeMatrixTree(TreeNode<Matrix> *&crr, char symbol, TreeNode<T> *par);
+	void createVectorOfStringsOnLevels(TreeNode<std::string>*, int, std::vector<std::string> &);
+	void balanceStringTree(TreeNode<std::string>*, int, std::vector<std::string> &, std::vector<std::string>);
 };
 
 template<class T>
