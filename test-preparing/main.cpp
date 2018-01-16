@@ -1,56 +1,34 @@
-#include <iostream>
+#include"dfsa.cpp"
 #include<fstream>
+#include<iostream>
+#include<sstream>
 
-#include "Tree.cpp"
-
-
-void testBuild()
-{
-	Tree<int> empty;
-	Tree<int> t90(90, empty, empty),
-		t12(12, t90, empty),
-		t30(30, empty, t12),
-		t50(50, empty, empty),
-		t5(5, t50, empty),
-		t7(7, t30, t5);
-
-
-	t7.insertElement("LL", 100);
-	//std::cout << t7;
-	std::ofstream out("tree.dot");
-	out << t7;
+void testGrammar() {
+	std::ifstream in("grammar.txt");
+	std::string rule;
+	char initialState = in.peek();
+	DFSA a(initialState - 'A');
+	a.setFinalState('Z' - 'A' + 1);
+	while (!in.eof()) {
+		std::getline(in, rule);
+		if (rule.length() == 6) {
+			a.addTransition(rule[0] - 'A', rule[5], 'Z' - 'A' + 1);
+		}
+		if (rule.length() == 7) {
+			a.addTransition(rule[0] - 'A', rule[5], rule[6] - 'A');
+		}
+	}
 }
 
-void testTrace()
-{
-	Tree<int> t;
-
-	t.insertElement("", 10);
-	t.insertElement("L", 20);
-
-	std::cout << t;
+void testPrintDotty(){
+	DFSA a;
+	std::ofstream out("automata.dot");
+	out << "digraph G {" << std::endl;
+	a.printDotty(out);
+	out << "}" << std::endl;
 }
 
-void testBOT()
-{
-	Tree<int> t;
-
-	t.insertBOT(10);
-	t.insertBOT(20);
-	t.insertBOT(5);
-
-	std::cout << t;
-
-}
-
-
-int main()
-{
-
-	testBuild ();
-	//testTrace();
-	//testBOT();
+int main() {
 	system("pause");
 	return 0;
-
 }
