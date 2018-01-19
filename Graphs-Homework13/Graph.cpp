@@ -3,6 +3,7 @@
 #include<iostream>
 #include<fstream>
 #include<algorithm>
+#include<queue>
 
 void numberOfPathsFrom(std::vector<char> **G, int n, int state, 
 						std::string word, int index, int &count) {
@@ -144,13 +145,25 @@ void testMakeTree() {
 	out << "}" << std::endl;
 }
 
-bool hasPath(bool **G, int n, int fromState, int toState) {
+bool isFrom(int state, std::vector<int> marked) {
+	for (int crr : marked) {
+		if (crr == state) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool hasPath(bool **G, int n, int fromState, int toState, std::vector<int> &marked) {
 	if (G[fromState][toState]) {
 		return true;
 	}
+	marked.push_back(fromState);
 	for (int nextState = 0; nextState < n; nextState++) {
-		if (G[fromState][nextState] && hasPath(G, n, nextState, toState)) {
-			return true;
+		if (!isFrom(nextState, marked)) {
+			if (G[fromState][nextState] && hasPath(G, n, nextState, toState, marked)) {
+				return true;
+			}
 		}
 	}
 	return false;
@@ -161,10 +174,11 @@ bool topolSort(bool **G, int n, std::vector<int> &v) {
 		return true;
 	}
 	bool flag;
+	std::vector<int> marked;
 	for (int i = 0; i < v.size(); i++) {
 		flag = true;
 		for (int toState : v) {
-			if (hasPath(G, n, v[i], toState)) {
+			if (hasPath(G, n, v[i], toState, marked)) {
 				flag = false;
 				break;
 			}
@@ -243,6 +257,62 @@ bool** makeGraph(bool **L, int n) {
 	return G;
 }
 
+int countConnectedComponents(bool **G, int n, std::vector<int> &allVertexes) {
+	if (allVertexes.empty()){ 
+		return 0;
+	}
+	if (allVertexes.size() == 1) {
+		return 1;
+	}
+	int vertex = allVertexes[allVertexes.size() - 1];
+	for (int i = 0; i < allVertexes.size() - 1; i++) {
+		std::vector<int> marked;
+		if (hasPath(G, n, vertex, allVertexes[i], marked)) {
+			allVertexes.erase(allVertexes.begin() + i);
+			i--;
+		}
+	}
+	allVertexes.erase(allVertexes.begin() + allVertexes.size() - 1);
+	return 1 + countConnectedComponents(G, n, allVertexes);
+}
+
+#define SENTINEL INT_MAX
+
+int countConnectedComponents2(bool **G, int n) {
+	int count = 0;
+
+	std::queue<int> marked;
+	marked.push(0);
+	std::vector<int> v;
+	v.push_back(0);
+
+	while (v.size() < n) {
+		while (!marked.empty()) {
+			int vertex = marked.front();
+			marked.pop();
+			for (int nextVertex = 0; nextVertex < n; nextVertex++) {
+				if (!isFrom(nextVertex, v) && G[vertex][nextVertex]) {
+					marked.push(nextVertex);
+					v.push_back(nextVertex);
+				}
+			}
+		}
+		count++;
+		if (v.size() == n - 1) {
+			count++;
+			return count;
+		}
+		for (int vertex = 0; vertex < n; vertex++) {
+			if (!isFrom(vertex, v)) {
+				marked.push(vertex);
+				v.push_back(vertex);
+				break;
+			}
+		}
+	}
+	return count;
+}
+
 void testMakeGraph() {
 	bool **L = new bool*[3];
 	for (int i = 0; i < 3; i++) {
@@ -284,6 +354,15 @@ void testMakeGraph() {
 		}
 	}
 	out << "}" << std::endl;
+
+	std::vector<int> allVertexes;
+	for (int i = 0; i < 9; i++) {
+		allVertexes.push_back(i);
+	}
+	std::cout << countConnectedComponents(G, 9, allVertexes) << std::endl;
+	std::cout << countConnectedComponents2(G, 9) << std::endl;
+	//std::vector<int> marked;
+	//std::cout << hasPath(G, 9, 7, 1, marked);
 }
 
 int main() {
