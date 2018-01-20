@@ -365,11 +365,51 @@ void testMakeGraph() {
 	//std::cout << hasPath(G, 9, 7, 1, marked);
 }
 
+bool hasKPath(bool **G, int n, int fromVertex, int toVertex, int k) {
+	if (k == 0) {
+		return fromVertex == toVertex;
+	}
+	for (int vertex = 0; vertex < n; vertex++) {
+		if (G[fromVertex][vertex] && hasKPath(G, n, vertex, toVertex, k - 1)) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool hasKCycle(bool **G, int n, int k) {
+	for (int fromVertex = 0; fromVertex < n; fromVertex++) {
+		if (hasKPath(G, n, fromVertex, fromVertex, k)) {
+			return true;
+		}
+	}
+	return false;
+}
+
+void testHasKCycle() {
+	bool **G = new bool*[5];
+	for (int i = 0; i < 5; i++) {
+		G[i] = new bool[5];
+		for (int j = 0; j < 5; j++) {
+			G[i][j] = false;
+		}
+	}
+	G[0][1] = G[1][0] = G[0][4] = G[4][0] = true;
+	std::cout << hasKCycle(G, 5, 4) << std::endl;
+	std::cout << hasKCycle(G, 5, 3) << std::endl;
+	std::cout << hasKCycle(G, 5, 2) << std::endl;
+	std::cout << hasKCycle(G, 5, 5) << std::endl;
+	G[1][4] = G[4][3] = G[3][2] = G[2][0] = true;
+	std::cout << hasKCycle(G, 5, 5) << std::endl;
+	std::cout << hasKCycle(G, 5, 6) << std::endl;
+}
+
 int main() {
 	//testNumberOfPaths();
 	//testMakeTree();
 	//testTopolSort();
-	testMakeGraph();
+	//testMakeGraph();
+	testHasKCycle();
 
 	system("pause");
 	return 0;
