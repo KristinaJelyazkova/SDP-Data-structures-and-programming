@@ -4,16 +4,16 @@
 #include <stack>
 #include <queue>
 
-// погледни windstack на различните итератори и begin и end на BTree
-// използваме опашка само ако искаме да обхождаме в широчина
-// в стекът трябва да се внимава за реда - наобратно е
+// РїРѕРіР»РµРґРЅРё windstack РЅР° СЂР°Р·Р»РёС‡РЅРёС‚Рµ РёС‚РµСЂР°С‚РѕСЂРё Рё begin Рё end РЅР° BTree
+// РёР·РїРѕР»Р·РІР°РјРµ РѕРїР°С€РєР° СЃР°РјРѕ Р°РєРѕ РёСЃРєР°РјРµ РґР° РѕР±С…РѕР¶РґР°РјРµ РІ С€РёСЂРѕС‡РёРЅР°
+// РІ СЃС‚РµРєСЉС‚ С‚СЂСЏР±РІР° РґР° СЃРµ РІРЅРёРјР°РІР° Р·Р° СЂРµРґР° - РЅР°РѕР±СЂР°С‚РЅРѕ Рµ
 
 template <class T>
 PredIterator<T>::PredIterator(TreeNode<T> *root, bool (*_pred) (const T&))
 {
-	if (root != nullptr) // ако дървото е празно, ще имаме празен стек
+	if (root != nullptr) // Р°РєРѕ РґСЉСЂРІРѕС‚Рѕ Рµ РїСЂР°Р·РЅРѕ, С‰Рµ РёРјР°РјРµ РїСЂР°Р·РµРЅ СЃС‚РµРє
 	{
-		s.push(task<T>(root, false)); // в началото винаги слагаме false при root
+		s.push(task<T>(root, false)); // РІ РЅР°С‡Р°Р»РѕС‚Рѕ РІРёРЅР°РіРё СЃР»Р°РіР°РјРµ false РїСЂРё root
 		pred = _pred;
 		windStack(); //!!!
 	}
@@ -23,21 +23,21 @@ template <class T>
 void PredIterator<T>::windStack()
 {
 	//!!! s.top().toPrintNow == false
-	while (!s.empty() && s.top().toPrintNow == false) // стекът е направил стъпката си, когато на върха има елемент, готов за взимане (принтене)
+	while (!s.empty() && s.top().toPrintNow == false) // СЃС‚РµРєСЉС‚ Рµ РЅР°РїСЂР°РІРёР» СЃС‚СЉРїРєР°С‚Р° СЃРё, РєРѕРіР°С‚Рѕ РЅР° РІСЉСЂС…Р° РёРјР° РµР»РµРјРµРЅС‚, РіРѕС‚РѕРІ Р·Р° РІР·РёРјР°РЅРµ (РїСЂРёРЅС‚РµРЅРµ)
 	{
 
-		task<T> currentTask = s.top(); // взимаме върха на стека
-		s.pop(); // махаме го
+		task<T> currentTask = s.top(); // РІР·РёРјР°РјРµ РІСЉСЂС…Р° РЅР° СЃС‚РµРєР°
+		s.pop(); // РјР°С…Р°РјРµ РіРѕ
 
 		if (currentTask.node->right != nullptr)
-			s.push(task<T>(currentTask.node->right, false)); // добавяме дясното дете само ако има такова
+			s.push(task<T>(currentTask.node->right, false)); // РґРѕР±Р°РІСЏРјРµ РґСЏСЃРЅРѕС‚Рѕ РґРµС‚Рµ СЃР°РјРѕ Р°РєРѕ РёРјР° С‚Р°РєРѕРІР°
 
 		if (pred(currentTask.node->data)) {
-			s.push(task<T>(currentTask.node, true)); // добавяме настоящето (това, което сме махнали) само ако изпълнява предиката, иначе ще зациклим!!!!
+			s.push(task<T>(currentTask.node, true)); // РґРѕР±Р°РІСЏРјРµ РЅР°СЃС‚РѕСЏС‰РµС‚Рѕ (С‚РѕРІР°, РєРѕРµС‚Рѕ СЃРјРµ РјР°С…РЅР°Р»Рё) СЃР°РјРѕ Р°РєРѕ РёР·РїСЉР»РЅСЏРІР° РїСЂРµРґРёРєР°С‚Р°, РёРЅР°С‡Рµ С‰Рµ Р·Р°С†РёРєР»РёРј!!!!
 		}
 
 		if (currentTask.node->left != nullptr)
-			s.push(task<T>(currentTask.node->left, false)); // добавяме лявото дете само ако има такова
+			s.push(task<T>(currentTask.node->left, false)); // РґРѕР±Р°РІСЏРјРµ Р»СЏРІРѕС‚Рѕ РґРµС‚Рµ СЃР°РјРѕ Р°РєРѕ РёРјР° С‚Р°РєРѕРІР°
 
 
 	}
@@ -48,7 +48,7 @@ T PredIterator<T>::operator * ()
 {
 	assert(!s.empty());
 
-	task<T> topTask = s.top(); // не махаме елемента, за да можем да го достъпваме колкото си искаме пъти
+	task<T> topTask = s.top(); // РЅРµ РјР°С…Р°РјРµ РµР»РµРјРµРЅС‚Р°, Р·Р° РґР° РјРѕР¶РµРј РґР° РіРѕ РґРѕСЃС‚СЉРїРІР°РјРµ РєРѕР»РєРѕС‚Рѕ СЃРё РёСЃРєР°РјРµ РїСЉС‚Рё
 	return topTask.node->data;
 }
 
@@ -60,10 +60,10 @@ bool PredIterator<T>::operator != (const PredIterator<T> &other)
 
 
 template <class T>
-bool PredIterator<T>::operator == (const PredIterator<T> &other) // равни са ако стековете им са празни или са пълни и върховете им имат равни неща (приемаме, че обхождат едно и също дърво)
+bool PredIterator<T>::operator == (const PredIterator<T> &other) // СЂР°РІРЅРё СЃР° Р°РєРѕ СЃС‚РµРєРѕРІРµС‚Рµ РёРј СЃР° РїСЂР°Р·РЅРё РёР»Рё СЃР° РїСЉР»РЅРё Рё РІСЉСЂС…РѕРІРµС‚Рµ РёРј РёРјР°С‚ СЂР°РІРЅРё РЅРµС‰Р° (РїСЂРёРµРјР°РјРµ, С‡Рµ РѕР±С…РѕР¶РґР°С‚ РµРґРЅРѕ Рё СЃСЉС‰Рѕ РґСЉСЂРІРѕ)
 {
 	//!!***!!!***!!
-	//s == other.s следва от това нещо:
+	//s == other.s СЃР»РµРґРІР° РѕС‚ С‚РѕРІР° РЅРµС‰Рѕ:
 
 	return (s.empty() && other.s.empty()) ||
 		(!s.empty() && !other.s.empty() &&
@@ -75,8 +75,8 @@ template <class T>
 PredIterator<T>& PredIterator<T>::operator ++ (int)
 {
 	assert(!s.empty());
-	s.pop(); // елементът е прочетен, значи го махаме
-	windStack(); //!!! изпълняваме една стъпка за стека
+	s.pop(); // РµР»РµРјРµРЅС‚СЉС‚ Рµ РїСЂРѕС‡РµС‚РµРЅ, Р·РЅР°С‡Рё РіРѕ РјР°С…Р°РјРµ
+	windStack(); //!!! РёР·РїСЉР»РЅСЏРІР°РјРµ РµРґРЅР° СЃС‚СЉРїРєР° Р·Р° СЃС‚РµРєР°
 
 	return *this;
 }
@@ -98,7 +98,7 @@ void LeafIterator<T>::windStack()
 	while (!s.empty() && s.top().toPrintNow == false)
 	{
 
-		task<T> currentTask = s.top(); 
+		task<T> currentTask = s.top();
 		s.pop();
 
 		if (currentTask.node->right != nullptr)
@@ -108,7 +108,7 @@ void LeafIterator<T>::windStack()
 			s.push(task<T>(currentTask.node->left, false));
 
 		if (currentTask.node->left == nullptr && currentTask.node->right == nullptr)
-			s.push(task<T>(currentTask.node, true)); // слагаме настоящия елемент само ако е листо
+			s.push(task<T>(currentTask.node, true)); // СЃР»Р°РіР°РјРµ РЅР°СЃС‚РѕСЏС‰РёСЏ РµР»РµРјРµРЅС‚ СЃР°РјРѕ Р°РєРѕ Рµ Р»РёСЃС‚Рѕ
 
 
 	}
@@ -134,7 +134,7 @@ template <class T>
 bool LeafIterator<T>::operator == (const LeafIterator<T> &other)
 {
 	//!!***!!!***!!
-	//s == other.s следва от това нещо:
+	//s == other.s СЃР»РµРґРІР° РѕС‚ С‚РѕРІР° РЅРµС‰Рѕ:
 
 	return (s.empty() && other.s.empty()) ||
 		(!s.empty() && !other.s.empty() &&
@@ -153,7 +153,7 @@ LeafIterator<T>& LeafIterator<T>::operator ++ (int)
 }
 
 template <class T>
-LevelIterator<T>::LevelIterator(TreeNode<T> *root) { // използваме опашка
+LevelIterator<T>::LevelIterator(TreeNode<T> *root) { // РёР·РїРѕР»Р·РІР°РјРµ РѕРїР°С€РєР°
 	if(root != nullptr)
 		q.push(root);
 }
@@ -179,8 +179,8 @@ template <class T>
 LevelIterator<T>& LevelIterator<T>::operator ++ (int) {
 	assert(!q.empty());
 	TreeNode<T> * current = q.front();
-	q.pop(); // в опашката всичко си се подрежда както ни трябва, затова нямаме toPrintNow, а директно си принтим
-	if (current->left != nullptr) { // слагаме децата на настоящият възел на дървото
+	q.pop(); // РІ РѕРїР°С€РєР°С‚Р° РІСЃРёС‡РєРѕ СЃРё СЃРµ РїРѕРґСЂРµР¶РґР° РєР°РєС‚Рѕ РЅРё С‚СЂСЏР±РІР°, Р·Р°С‚РѕРІР° РЅСЏРјР°РјРµ toPrintNow, Р° РґРёСЂРµРєС‚РЅРѕ СЃРё РїСЂРёРЅС‚РёРј
+	if (current->left != nullptr) { // СЃР»Р°РіР°РјРµ РґРµС†Р°С‚Р° РЅР° РЅР°СЃС‚РѕСЏС‰РёСЏС‚ РІСЉР·РµР» РЅР° РґСЉСЂРІРѕС‚Рѕ
 		q.push(current->left);
 	}
 	if (current->right != nullptr) {
@@ -208,9 +208,9 @@ void LRoTreeIterator<T>::windStack()
 
 		task<T> currentTask = s.top(); s.pop();
 
-		// за поредността на обхождане на лявото, дясното поддърво и корена има значение само реда на следващите 3:
+		// Р·Р° РїРѕСЂРµРґРЅРѕСЃС‚С‚Р° РЅР° РѕР±С…РѕР¶РґР°РЅРµ РЅР° Р»СЏРІРѕС‚Рѕ, РґСЏСЃРЅРѕС‚Рѕ РїРѕРґРґСЉСЂРІРѕ Рё РєРѕСЂРµРЅР° РёРјР° Р·РЅР°С‡РµРЅРёРµ СЃР°РјРѕ СЂРµРґР° РЅР° СЃР»РµРґРІР°С‰РёС‚Рµ 3:
 		s.push(task<T>(currentTask.node, true)); // 1
-		// тук искаме да обходим всички елементи, затова слагаме и настоящия
+		// С‚СѓРє РёСЃРєР°РјРµ РґР° РѕР±С…РѕРґРёРј РІСЃРёС‡РєРё РµР»РµРјРµРЅС‚Рё, Р·Р°С‚РѕРІР° СЃР»Р°РіР°РјРµ Рё РЅР°СЃС‚РѕСЏС‰РёСЏ
 
 		if (currentTask.node->right != nullptr)
 			s.push(task<T>(currentTask.node->right, false)); // 2
@@ -242,7 +242,7 @@ template <class T>
 bool LRoTreeIterator<T>::operator == (const LRoTreeIterator<T> &other)
 {
 	//!!***!!!***!!
-	//s == other.s следва от това нещо:
+	//s == other.s СЃР»РµРґРІР° РѕС‚ С‚РѕРІР° РЅРµС‰Рѕ:
 
 	return (s.empty() && other.s.empty()) ||
 		(!s.empty() && !other.s.empty() &&
@@ -312,7 +312,7 @@ template <class T>
 bool oRLTreeIterator<T>::operator == (const oRLTreeIterator<T> &other)
 {
 	//!!***!!!***!!
-	//s == other.s следва от това нещо:
+	//s == other.s СЃР»РµРґРІР° РѕС‚ С‚РѕРІР° РЅРµС‰Рѕ:
 
 	return (s.empty() && other.s.empty()) ||
 		(!s.empty() && !other.s.empty() &&
@@ -511,7 +511,7 @@ bool BTree<T>::member(const T& y, const TreeNode<T> *crr) const
 template <class T>
 void BTree<T>::read(std::istream &in)
 {
-	//приемаме, че дървото е празно
+	//РїСЂРёРµРјР°РјРµ, С‡Рµ РґСЉСЂРІРѕС‚Рѕ Рµ РїСЂР°Р·РЅРѕ
 	root = readFromStream(in);
 }
 
@@ -532,38 +532,38 @@ TreeNode<T>* BTree<T>::readFromStream(std::istream &in)
 	{
 		return nullptr;
 	}
-	//уверени сме, че в потока следват следните неща:
-	//1. СТОЙНОСТ НА КОРЕНА. ПРИЕМАМЕ, ЧЕ ОПЕРАТОР >>T КОРЕКТНО ЩЕ Я ИЗЧЕТЕ
+	//СѓРІРµСЂРµРЅРё СЃРјРµ, С‡Рµ РІ РїРѕС‚РѕРєР° СЃР»РµРґРІР°С‚ СЃР»РµРґРЅРёС‚Рµ РЅРµС‰Р°:
+	//1. РЎРўРћР™РќРћРЎРў РќРђ РљРћР Р•РќРђ. РџР РР•РњРђРњР•, Р§Р• РћРџР•Р РђРўРћР  >>T РљРћР Р•РљРўРќРћ Р©Р• РЇ РР—Р§Р•РўР•
 
 	T rootValue;
 	in >> rootValue;
 
-	//2. интервал
+	//2. РёРЅС‚РµСЂРІР°Р»
 
 	nextChar = in.get();
 	assert(nextChar == ' ');
 
-	//3. ЛЯВО ПОДДЪРВО
+	//3. Р›РЇР’Рћ РџРћР”Р”РЄР Р’Рћ
 
 	TreeNode<T> *leftSubTree;
 	leftSubTree = readFromStream(in);
 
-	//4. интервал
+	//4. РёРЅС‚РµСЂРІР°Р»
 
 	nextChar = in.get();
 	assert(nextChar == ' ');
 
-	//5. ДЯСНО ПОДДЪРВО
+	//5. Р”РЇРЎРќРћ РџРћР”Р”РЄР Р’Рћ
 
 	TreeNode<T> *rightSubTree;
 	rightSubTree = readFromStream(in);
 
-	//6. интервал
+	//6. РёРЅС‚РµСЂРІР°Р»
 
 	nextChar = in.get();
 	assert(nextChar == ' ');
 
-	//7. затваряща скоба
+	//7. Р·Р°С‚РІР°СЂСЏС‰Р° СЃРєРѕР±Р°
 
 	nextChar = in.get();
 	assert(nextChar == ')');
@@ -868,7 +868,7 @@ template <class T>
 bool LRoRTreeIterator<T>::operator == (const LRoRTreeIterator<T> &other)
 {
 	//!!***!!!***!!
-	//s == other.s следва от това нещо:
+	//s == other.s СЃР»РµРґРІР° РѕС‚ С‚РѕРІР° РЅРµС‰Рѕ:
 
 	return (s.empty() && other.s.empty()) ||
 		(!s.empty() && !other.s.empty() &&
@@ -888,7 +888,7 @@ LRoRTreeIterator<T>& LRoRTreeIterator<T>::operator ++ (int)
 
 template <class T>
 template <class I>
-I BTree<T>::begin() // връща всякакви итератори => още един template заради името на съответния итератор
+I BTree<T>::begin() // РІСЂСЉС‰Р° РІСЃСЏРєР°РєРІРё РёС‚РµСЂР°С‚РѕСЂРё => РѕС‰Рµ РµРґРёРЅ template Р·Р°СЂР°РґРё РёРјРµС‚Рѕ РЅР° СЃСЉРѕС‚РІРµС‚РЅРёСЏ РёС‚РµСЂР°С‚РѕСЂ
 {
 	return I(root);
 }
