@@ -30,7 +30,7 @@ struct task
 };
 
 template <class T>
-class PredIterator // обхожда само тези елементи от дървото, които изпълняват предиката
+class PredIterator // РѕР±С…РѕР¶РґР° СЃР°РјРѕ С‚РµР·Рё РµР»РµРјРµРЅС‚Рё РѕС‚ РґСЉСЂРІРѕС‚Рѕ, РєРѕРёС‚Рѕ РёР·РїСЉР»РЅСЏРІР°С‚ РїСЂРµРґРёРєР°С‚Р°
 {
 public:
 	PredIterator(TreeNode<T> *root, bool (*_pred) (const T&));
@@ -49,7 +49,7 @@ private:
 };
 
 template <class T>
-class LeafIterator // обхожда листата на дървото отляво надясно
+class LeafIterator // РѕР±С…РѕР¶РґР° Р»РёСЃС‚Р°С‚Р° РЅР° РґСЉСЂРІРѕС‚Рѕ РѕС‚Р»СЏРІРѕ РЅР°РґСЏСЃРЅРѕ
 {
 public:
 	LeafIterator(TreeNode<T> *root);
@@ -67,7 +67,7 @@ private:
 };
 
 template <class T>
-class LevelIterator { // BFS- обхождане в широчина
+class LevelIterator { // BFS- РѕР±С…РѕР¶РґР°РЅРµ РІ С€РёСЂРѕС‡РёРЅР°
 public:
 	LevelIterator(TreeNode<T> *root);
 
@@ -81,7 +81,7 @@ private:
 };
 
 template <class T>
-class LRoTreeIterator // обхожда първото лявото поддърво, после дясното и накрая корена
+class LRoTreeIterator // РѕР±С…РѕР¶РґР° РїСЉСЂРІРѕС‚Рѕ Р»СЏРІРѕС‚Рѕ РїРѕРґРґСЉСЂРІРѕ, РїРѕСЃР»Рµ РґСЏСЃРЅРѕС‚Рѕ Рё РЅР°РєСЂР°СЏ РєРѕСЂРµРЅР°
 {
 public:
 	LRoTreeIterator(TreeNode<T> *root);
@@ -99,7 +99,7 @@ private:
 };
 
 template <class T>
-class oRLTreeIterator // обхожда първото корена, после дясното поддърво и накрая лявото 
+class oRLTreeIterator // РѕР±С…РѕР¶РґР° РїСЉСЂРІРѕС‚Рѕ РєРѕСЂРµРЅР°, РїРѕСЃР»Рµ РґСЏСЃРЅРѕС‚Рѕ РїРѕРґРґСЉСЂРІРѕ Рё РЅР°РєСЂР°СЏ Р»СЏРІРѕС‚Рѕ
 {
 public:
 	oRLTreeIterator(TreeNode<T> *root);
@@ -118,7 +118,7 @@ private:
 
 
 template <class T>
-class LRoRTreeIterator // обхожда първо лявото поддърво, после корена и накрая дясното 
+class LRoRTreeIterator // РѕР±С…РѕР¶РґР° РїСЉСЂРІРѕ Р»СЏРІРѕС‚Рѕ РїРѕРґРґСЉСЂРІРѕ, РїРѕСЃР»Рµ РєРѕСЂРµРЅР° Рё РЅР°РєСЂР°СЏ РґСЏСЃРЅРѕС‚Рѕ
 {
 public:
 	LRoRTreeIterator(TreeNode<T> *root);
@@ -144,9 +144,9 @@ public:
 
 	void levelsPrint(std::ostream&);
 
-	template <class I> // връща различни итератори според това как извикаме begin< iterator_name<T> >
+	template <class I> // РІСЂСЉС‰Р° СЂР°Р·Р»РёС‡РЅРё РёС‚РµСЂР°С‚РѕСЂРё СЃРїРѕСЂРµРґ С‚РѕРІР° РєР°Рє РёР·РІРёРєР°РјРµ begin< iterator_name<T> >
 	I begin();
-	
+
 	template <class I>
 	I end();
 
